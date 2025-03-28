@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>SaveNServe - Engagement Personnel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary: #2E7D32;
+      --primary-light: #4CAF50;
+      --primary-dark: #1B5E20;
+      --secondary: #81C784;
+      --background: #F1F8E9;
+      --surface: #FFFFFF;
+      --text: #263238;
+      --text-light: #607D8B;
+      --danger: #F44336;
+      --warning: #FFC107;
+      --success: #4CAF50;
+    }
+    
+    body {
+      background-color: var(--background);
+      color: var(--text);
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background-color: var(--primary-dark);
+      color: white;
+      padding: 20px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40px;
+      font-weight: bold;
+      font-size: 24px;
+    }
+    
+    .logo-icon {
+      margin-right: 10px;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 20px;
+    }
+    
+    .menu-items {
+      list-style: none;
+    }
+    
+    .menu-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .menu-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .menu-item.active {
+      background-color: var(--primary);
+    }
+    
+    .menu-icon {
+      margin-right: 10px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Main Content */
+    .main-content {
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    /* Team Engagement Score */
+    .score-card {
+      background-color: var(--surface);
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 20px;
+      width: 320px;
+      height: 170px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .score-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 15px;
+    }
+    
+    .score-value {
+      font-size: 60px;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+    
+    .score-trend {
+      font-size: 14px;
+      color: var(--success);
+    }
+    
+    /* Performance by team member */
+    .team-performance {
+      background-color: var(--surface);
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 20px;
+      width: 620px;
+      height: 170px;
+      margin-left: 340px;
+      margin-top: -190px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .performance-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 15px;
+    }
+    
+    .member-performance {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .member-bar {
+      width: 100px;
+      height: 15px;
+      background-color: #dddddd;
+      border: 1px solid #cccccc;
+      border-radius: 3px;
+      margin-right: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .member-progress {
+      height: 100%;
+      background-color: var(--primary-light);
+      width: 0;
+    }
+    
+    .bar-1 .member-progress { width: 92%; }
+    .bar-2 .member-progress { width: 89%; }
+    .bar-3 .member-progress { width: 86%; }
+    .bar-4 .member-progress { width: 78%; }
+    
+    .member-name {
+      font-size: 12px;
+      color: var(--text);
+      flex: 1;
+    }
+    
+    .member-score {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin: 30px 0 20px;
+    }
+    
+    .tab {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      height: 40px;
+      margin-right: 20px;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .tab:hover {
+      background-color: #f8f8f8;
+    }
+    
+    .tab.active {
+      background-color: var(--primary-light);
+      color: white;
+      border-color: var(--primary);
+      font-weight: bold;
+    }
+    
+    /* Challenges Section */
+    .challenges-section {
+      background-color: var(--surface);
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      padding: 20px;
+      width: 960px;
+      height: 450px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .challenges-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 15px;
+    }
+    
+    .challenge-item {
+      padding: 20px;
+      border: 1px solid #eeeeee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      position: relative;
+      background-color: var(--surface);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .challenge-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 8px;
+      background-color: var(--primary-light);
+      border-radius: 8px 0 0 8px;
+    }
+    
+    .challenge-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 5px;
+      margin-left: 15px;
+    }
+    
+    .challenge-description {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 15px;
+      margin-left: 15px;
+    }
+    
+    .challenge-progress {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 5px;
+      margin-left: 15px;
+    }
+    
+    .progress-bar {
+      width: 400px;
+      height: 10px;
+      background-color: #eeeeee;
+      border: 1px solid #cccccc;
+      border-radius: 5px;
+      margin-left: 15px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--primary-light);
+    }
+    
+    .fill-75 { width: 75%; }
+    .fill-60 { width: 60%; }
+    
+    .challenge-details {
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: var(--primary-light);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .challenge-details:hover {
+      background-color: var(--primary);
+    }
+    
+    .new-challenge {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px dashed #cccccc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .new-challenge-btn {
+      background-color: var(--primary-light);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .new-challenge-btn:hover {
+      background-color: var(--primary);
+    }
+    
+    /* Badges */
+    .badges {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #eeeeee;
+      border: 1px solid #cccccc;
+      border-radius: 5px;
+      padding: 5px 10px;
+      width: 200px;
+      height: 30px;
+      margin-top: 20px;
+    }
+    
+    .badges-text {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: bold;
+    }
+    
+    /* Layout for side by side elements */
+    .flex-row {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Modal for Coming Soon */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: var(--surface);
+      padding: 30px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+    
+    .modal-text {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    
+    .modal-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .modal-button:hover {
+      background-color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🍽️</div>
+        <span>SaveNServe</span>
+      </div>
+      <ul class="menu-items">
+        <a href="savenserve-dashboard.html" class="menu-item">
+          <div class="menu-icon">📊</div>
+          <span>Tableau de bord</span>
+        </a>
+        <a href="gestion-des-stocks.html" class="menu-item">
+          <div class="menu-icon">📦</div>
+          <span>Gestion des stocks</span>
+        </a>
+        <a href="engagement-personnel.html" class="menu-item active">
+          <div class="menu-icon">👥</div>
+          <span>Engagement personnel</span>
+        </a>
+        <a href="impact-environnemental.html" class="menu-item">
+          <div class="menu-icon">🌍</div>
+          <span>Impact environnemental</span>
+        </a>
+        <a href="rapport-et-previsions.html" class="menu-item">
+          <div class="menu-icon">📈</div>
+          <span>Rapports et prévisions</span>
+        </a>
+        <a href="#" class="menu-item" onclick="showSettingsModal(event)">
+          <div class="menu-icon">⚙️</div>
+          <span>Paramètres</span>
+        </a>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="container">
+        <!-- Team Engagement Score -->
+        <div class="score-card">
+          <div class="score-title">Score d'engagement équipe</div>
+          <div class="score-value">87%</div>
+          <div class="score-trend">↑ 5% depuis le mois dernier</div>
+        </div>
+        
+        <!-- Performance by team member -->
+        <div class="team-performance">
+          <div class="performance-title">Contributions par membre d'équipe</div>
+          
+          <div class="member-performance">
+            <div class="member-bar bar-1">
+              <div class="member-progress"></div>
+            </div>
+            <div class="member-name">Thomas (Chef)</div>
+            <div class="member-score">92%</div>
+          </div>
+          
+          <div class="member-performance">
+            <div class="member-bar bar-2">
+              <div class="member-progress"></div>
+            </div>
+            <div class="member-name">Marie (Sous-chef)</div>
+            <div class="member-score">89%</div>
+          </div>
+          
+          <div class="member-performance">
+            <div class="member-bar bar-3">
+              <div class="member-progress"></div>
+            </div>
+            <div class="member-name">Lucas (Cuisinier)</div>
+            <div class="member-score">86%</div>
+          </div>
+          
+          <div class="member-performance">
+            <div class="member-bar bar-4">
+              <div class="member-progress"></div>
+            </div>
+            <div class="member-name">Julie (Service)</div>
+            <div class="member-score">78%</div>
+          </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+          <div class="tab active">Défis</div>
+          <div class="tab">Formations</div>
+          <div class="tab">Reconnaissance</div>
+        </div>
+        
+        <!-- Challenges Section -->
+        <div class="challenges-section">
+          <div class="challenges-title">Défis actifs</div>
+          
+          <!-- Challenge 1 -->
+          <div class="challenge-item">
+            <div class="challenge-title">Défi Zéro Garniture Gaspillée</div>
+            <div class="challenge-description">Objectif: Réduire de 30% le gaspillage des garnitures en 2 semaines</div>
+            <div class="challenge-progress">Progression: 75% (3 jours restants)</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill fill-75"></div>
+            </div>
+            <button class="challenge-details">Voir détails</button>
+          </div>
+          
+          <!-- Challenge 2 -->
+          <div class="challenge-item">
+            <div class="challenge-title">Défi Évaluation Exacte des Portions</div>
+            <div class="challenge-description">Objectif: Précision à 90% des portions de viande servies</div>
+            <div class="challenge-progress">Progression: 60% (8 jours restants)</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill fill-60"></div>
+            </div>
+            <button class="challenge-details">Voir détails</button>
+          </div>
+          
+          <!-- New challenge button -->
+          <div class="new-challenge">
+            <button class="new-challenge-btn">+ Créer un nouveau défi</button>
+          </div>
+        </div>
+        
+        <!-- Team badges -->
+        <div class="badges">
+          <div class="badges-text">10 badges obtenus</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal pour les pages à venir -->
+  <div id="comingSoonModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">Fonctionnalité à venir</div>
+      <p class="modal-text" id="modalText">Cette section est en cours de développement et sera disponible prochainement.</p>
+      <button class="modal-button" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+  
+  <script>
+    // Fonction pour afficher la modal des rapports
+    function showReportsModal(event) {
+      event.preventDefault();
+      document.getElementById('modalText').innerText = "La section Rapports et prévisions est en cours de développement et sera disponible prochainement.";
+      document.getElementById('comingSoonModal').style.display = 'flex';
+    }
+    
+    // Fonction pour afficher la modal des paramètres
+    function showSettingsModal(event) {
+      event.preventDefault();
+      document.getElementById('modalText').innerText = "La section Paramètres est en cours de développement et sera disponible prochainement.";
+      document.getElementById('comingSoonModal').style.display = 'flex';
+    }
+    
+    // Fonction pour fermer la modal
+    function closeModal() {
+      document.getElementById('comingSoonModal').style.display = 'none';
+    }
+    
+    // Fermer la modal si on clique en dehors
+    window.onclick = function(event) {
+      const modal = document.getElementById('comingSoonModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
